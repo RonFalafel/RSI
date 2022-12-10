@@ -1,4 +1,3 @@
-from ctypes.wintypes import RGB
 from yeelight import Bulb
 
 import Utils.ILightChanger as ILightChanger
