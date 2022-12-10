@@ -1,15 +1,17 @@
 import PySimpleGUI as sg
 import numpy as np
 
-from Utils.LightChanger import LightChanger
+from Utils.LightChangerResolver import LightChangerResolver
+from Utils.ILightChanger import ILightChanger
 from Utils.ScreenReader import ScreenReader
 from Windows.SettingsWindow import SettingsWindow
 
 class MainWindow:
-    def __init__(self, screenReader: ScreenReader, lightChanger: LightChanger, settingsWindow : SettingsWindow):
+    def __init__(self, screenReader: ScreenReader, lightChangerResolver: LightChangerResolver, settingsWindow : SettingsWindow):
         self.settingsWindow = settingsWindow
         self.screenReader = screenReader
-        self.lightChanger = lightChanger
+        self.lightChangerResolver = lightChangerResolver
+        self.lightChanger = self.lightChangerResolver.getLightChanger()
 
     def showMainWindow(self):
         sg.theme('Reddit')
@@ -65,6 +67,7 @@ class MainWindow:
 
             if event == 'Settings': # if user clicks stop
                 self.settingsWindow.showSettingsWindow()
+                self.lightChanger = self.lightChangerResolver.getLightChanger()
 
             if running:
                 avg = self.screenReader.getAvgScreenColor(sc)

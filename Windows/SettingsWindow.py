@@ -1,18 +1,20 @@
 import PySimpleGUI as sg
 import time
 
-import Utils.ConfigurationManager as ConfigurationManager, Utils.LightChanger as LightChanger, Utils.Mode as Mode
+import Utils.ConfigurationManager as ConfigurationManager, Utils.ILightChanger as ILightChanger, Utils.Mode as Mode
+from Utils.LightChangerResolver import LightChangerResolver
+from Utils.HALightChanger import HALightChanger
+from Utils.YeeLightChanger import YeeLightChanger
 
 class SettingsWindow:
-    def __init__(self, configManager : ConfigurationManager, lightChanger: LightChanger):
+    def __init__(self, configManager : ConfigurationManager, lightChangerResolver: LightChangerResolver):
         self.configManager = configManager
-        self.lightChanger = lightChanger
+        self.lightChangerResolver = lightChangerResolver
+        self.lightChanger = self.lightChangerResolver.getLightChanger()
 
     def renderLayout(self):
         config = self.configManager.read()
         mode = config['MODE']['mode']
-        print(mode)
-        print(Mode.Mode.HomeAssistant)
         home_assistant_ip = config['HOME ASSISTANT']['home_assistant_ip']
         home_assistant_port = config['HOME ASSISTANT']['home_assistant_port']
         yeelight_ip = config['YEELIGHT']['yeelight_ip']
@@ -43,8 +45,7 @@ class SettingsWindow:
         defaultButtons = [
                 [
                     sg.Button('Default', tooltip = 'Returns all default values.'), 
-                    sg.Combo(values = modes, default_value = [mode], auto_size_text = True, key = 'MODE'), 
-                    sg.Button('Switch Mode', tooltip = 'Switches between yeelight mode to homme assistant mode.'), 
+                    sg.Combo(values = modes, default_value = [mode], auto_size_text = True, key = 'MODE', enable_events = True, tooltip = 'Switches between yeelight mode to homme assistant mode.'),
                     sg.Button('Save', tooltip = 'Validates and saves the new configuration.'), 
                     sg.Button('Cancel', tooltip = 'Closes the settings window.'), 
                 ]
@@ -62,13 +63,29 @@ class SettingsWindow:
             event, values = window.read()
             if event == 'Default':
                 self.configManager.default()
+                window.close()
                 window = self.renderLayout()        
+            if event == 'MODE':
+                mode = values['MODE']
+                self.configManager.writeMode(mode)
+                window.close()
+                window = self.renderLayout()   
             if event in ('Cancel', sg.WIN_CLOSED):
                 break
             if event == 'Save':
-                home_assistant_ip = values['HOME-ASSISTANT-IP']
-                home_assistant_port = values['HOME-ASSISTANT-PORT']
-                self.configManager.writeHAConfig(home_assistant_ip, home_assistant_port)
+                mode = values['MODE']
+                if str(mode) == str(Mode.Mode.HomeAssistant.name):
+                    home_assistant_ip = values['HOME-ASSISTANT-IP']
+                    home_assistant_port = values['HOME-ASSISTANT-PORT']
+                    self.configManager.writeHAConfig(home_assistant_ip, home_assistant_port)
+                    # self.lightChanger = HALightChanger(self.configManager)
+                elif str(mode) == str(Mode.Mode.Yeelight.name):
+                    yeelight_ip = values['YEELIGHT-IP']
+                    self.configManager.writeYeelightConfig(yeelight_ip)
+                    # self.lightChanger = YeeLightChanger(self.configManager)
+                
+                self.lightChanger = self.lightChangerResolver.getLightChanger()
+
                 try:
                     print('Testing Configuration')
                     self.lightChanger.changeColor(0, 255, 0, 100)
