@@ -4,12 +4,14 @@ import numpy as np
 from Utils.LightChangerResolver import LightChangerResolver
 from Utils.ILightChanger import ILightChanger
 from Utils.ScreenReader import ScreenReader
+from Utils.RGBToHSVConverter import RGBToHSVConverter
 from Windows.SettingsWindow import SettingsWindow
 
 class MainWindow:
-    def __init__(self, screenReader: ScreenReader, lightChangerResolver: LightChangerResolver, settingsWindow : SettingsWindow):
+    def __init__(self, screenReader: ScreenReader, rgbToHSVConverter: RGBToHSVConverter, lightChangerResolver: LightChangerResolver, settingsWindow : SettingsWindow):
         self.settingsWindow = settingsWindow
         self.screenReader = screenReader
+        self.rgbToHSVConverter = rgbToHSVConverter
         self.lightChangerResolver = lightChangerResolver
         self.lightChanger = self.lightChangerResolver.getLightChanger()
 
@@ -71,14 +73,11 @@ class MainWindow:
 
             if running:
                 avg = self.screenReader.getAvgScreenColor(sc)
-                r,g,b = avg[0],avg[1],avg[2]
-                if vary_br: # Calculating average screen brightness if varying brightness is enabled in the GUI
-                    # Brightness is measured by average r, g, and b values
-                    rgb_avg = np.average([r, g, b])
-                    # Brightness is then re-calculated from a scale of 1 to max-brightness (taken from the GUI)
-                    br = (rgb_avg / 255) * max_br
+                rgb = avg[0],avg[1],avg[2]
+                hsv = self.rgbToHSVConverter.rgb2hsv(*rgb)
+                if vary_br:
+                    self.lightChanger.changeColor(*hsv)
                 else:
-                    br = max_br
-                self.lightChanger.changeColor(r, g, b, br)
+                    self.lightChanger.changeColor(hsv[0], hsv[1], max_br)
 
         window.close()

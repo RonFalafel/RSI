@@ -10,25 +10,20 @@ from Utils.HALightChanger import HALightChanger
 from Utils.YeeLightChanger import YeeLightChanger
 from Utils.LightChangerResolver import LightChangerResolver
 from Utils.ScreenReader import ScreenReader
+from Utils.RGBToHSVConverter import RGBToHSVConverter
 from Windows.SettingsWindow import SettingsWindow
 from Windows.MainWindow import MainWindow
 
 # Utils Initialization
 configurationManager = ConfigurationManager()
 screenReader = ScreenReader()
+rgbToHSVConverter = RGBToHSVConverter()
 lightChangerResolver = LightChangerResolver(configurationManager)
 
 # Windows Initialization
 settingsWindow = SettingsWindow(configurationManager, lightChangerResolver)
-mainWindow = MainWindow(screenReader, lightChangerResolver, settingsWindow)
+mainWindow = MainWindow(screenReader, rgbToHSVConverter, lightChangerResolver, settingsWindow)
 
-# YLC = YeeLightChanger("192.168.1.164")
-# YLC.changeColor(0, 255, 0, 100)
-# time.sleep(1)
-# YLC.changeColor(0, 100, 0, 100)
-# time.sleep(1)
-# YLC.changeColor(0, 1, 0, 100)
-
-# print(discover_bulbs())
+# print(discover_bulbs()) # Fututre feature - auto-discover yealink bulbs using this
 
 mainWindow.showMainWindow()
