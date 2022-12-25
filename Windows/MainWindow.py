@@ -1,5 +1,4 @@
 import PySimpleGUI as sg
-import numpy as np
 
 from Utils.LightChangerResolver import LightChangerResolver
 from Utils.ILightChanger import ILightChanger
@@ -43,14 +42,13 @@ class MainWindow:
         running = False
 
         while True:
-            event, values = window.read(1000)      
-            print(event, values) # Shows GUI state every 1 second
+            event, values = window.read(150) # Seems buggy on HA mode - worked well on 1000ms
+            # print(event, values) # Shows GUI state
             max_br = values["MAX-BRIGHTNESS"]
             vary_br = values["VARY-BRIGHTNESS"]
             sc = screens_list.index(values['SCREENS-LIST'])
 
             if event == 'Start': # if user clicks start
-                # if br == '': br = 100 # todo make sure this is redundant - supposed to be beacuse of default-value
                 running = True
 
             if event == sg.WIN_CLOSED: # if user closes window
@@ -63,7 +61,6 @@ class MainWindow:
 
             if event == 'Refresh Screens': # if user clicks stop
                 screens_list = self.screenReader.getScreensList()
-                print(screens_list)
                 window.Element('SCREENS-LIST').update(values = screens_list, set_to_index = [0])
                 window.Element('SCREENS-LIST').update(disabled = len(screens_list) == 2)
 

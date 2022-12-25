@@ -10,7 +10,8 @@ class YeeLightChanger(ILightChanger.ILightChanger):
         self.yeelightIP = yeelightIP
         self.bulb = Bulb(self.yeelightIP)
         self.bulb.turn_on()
-        self.bulb.effect = "smooth" # can be "sudden"
+        self.bulb.effect = "smooth" # can be "sudden" or "smooth"
+        self.bulb.duration = 150 # miliseconds of duration of effect, ignored in "sudden" effect. MINIMUM 30!
         
         # Stop/Start music mode, bypasses lamp rate limits, ensures that previous sockets close before starting
         while True:

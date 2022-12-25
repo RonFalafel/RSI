@@ -1,6 +1,5 @@
 from Windows.MainWindow import MainWindow
-from yeelight import discover_bulbs
-import time
+# from yeelight import discover_bulbs # Fututre feature - auto-discover yealink bulbs using this
 
 # import Windows.SettingsWindow as SettingsWindow, Utils.ConfigurationManager as ConfigurationManager, Utils.HALightChanger as HALightChanger
 
