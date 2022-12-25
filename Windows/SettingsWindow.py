@@ -78,11 +78,9 @@ class SettingsWindow:
                     home_assistant_ip = values['HOME-ASSISTANT-IP']
                     home_assistant_port = values['HOME-ASSISTANT-PORT']
                     self.configManager.writeHAConfig(home_assistant_ip, home_assistant_port)
-                    # self.lightChanger = HALightChanger(self.configManager)
                 elif str(mode) == str(Mode.Mode.Yeelight.name):
                     yeelight_ip = values['YEELIGHT-IP']
                     self.configManager.writeYeelightConfig(yeelight_ip)
-                    # self.lightChanger = YeeLightChanger(self.configManager)
                 
                 self.lightChanger = self.lightChangerResolver.getLightChanger()
 
