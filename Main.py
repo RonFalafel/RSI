@@ -1,5 +1,6 @@
 from Windows.MainWindow import MainWindow
-# from yeelight import discover_bulbs # Fututre feature - auto-discover yealink bulbs using this
+from yeelight import discover_bulbs # Fututre feature - auto-discover yealink bulbs using this
+print(discover_bulbs()) # Fututre feature - auto-discover yealink bulbs using this
 
 from Utils.ConfigurationManager import ConfigurationManager
 from Utils.LightChangerResolver import LightChangerResolver
@@ -17,7 +18,5 @@ lightChangerResolver = LightChangerResolver(configurationManager)
 # Windows Initialization
 settingsWindow = SettingsWindow(configurationManager, lightChangerResolver)
 mainWindow = MainWindow(screenReader, rgbToHSVConverter, lightChangerResolver, settingsWindow)
-
-# print(discover_bulbs()) # Fututre feature - auto-discover yealink bulbs using this
 
 mainWindow.showMainWindow()
