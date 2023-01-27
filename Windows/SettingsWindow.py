@@ -2,18 +2,21 @@ import PySimpleGUI as sg
 import time
 
 import Utils.ConfigurationManager as ConfigurationManager, Utils.ILightChanger as ILightChanger, Utils.Mode as Mode
+from Utils.YeeLightBulbFinder import YeeLightBulbFinder
 from Utils.LightChangerResolver import LightChangerResolver
 from Utils.HALightChanger import HALightChanger
 from Utils.YeeLightChanger import YeeLightChanger
 
 class SettingsWindow:
-    def __init__(self, configManager : ConfigurationManager, lightChangerResolver: LightChangerResolver):
+    def __init__(self, configManager : ConfigurationManager, lightChangerResolver: LightChangerResolver, yeeLightBulbFinder: YeeLightBulbFinder):
         self.configManager = configManager
         self.lightChangerResolver = lightChangerResolver
         self.lightChanger = self.lightChangerResolver.getLightChanger()
+        self.yeeLightBulbFinder = yeeLightBulbFinder
 
     def renderLayout(self):
         config = self.configManager.read()
+
         mode = config['MODE']['mode']
         home_assistant_ip = config['HOME ASSISTANT']['home_assistant_ip']
         home_assistant_port = config['HOME ASSISTANT']['home_assistant_port']
@@ -37,6 +40,11 @@ class SettingsWindow:
                 [
                     sg.Text('Yeelight bulb IP', tooltip = 'The local address of your Yeelight lightbulb.'), 
                     sg.InputText(default_text = yeelight_ip, key = 'YEELIGHT-IP')
+                ],
+                [
+                    sg.Text('Bulbs in your LAN', tooltip = 'Automatically discovered yeelight bulbs in your LAN.'), 
+                    sg.Button('Discover', tooltip = 'Automatically discovers yeelight bulbs in your LAN.'),
+                    sg.Combo(values = [], auto_size_text = True, enable_events = True, key = 'DISCOVERED-BULBS-LIST')
                 ]
             ]
 
@@ -61,6 +69,12 @@ class SettingsWindow:
 
         while True:
             event, values = window.read()
+            if event == 'DISCOVERED-BULBS-LIST':
+                ip = values['DISCOVERED-BULBS-LIST']
+                window.Element('YEELIGHT-IP').update(value = ip)
+            if event == 'Discover':
+                bulbs = self.yeeLightBulbFinder.findBulbs()
+                window.Element('DISCOVERED-BULBS-LIST').update(values = bulbs)
             if event == 'Default':
                 self.configManager.default()
                 window.close()
