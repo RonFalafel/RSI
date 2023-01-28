@@ -13,6 +13,7 @@ class SettingsWindow:
         self.lightChangerResolver = lightChangerResolver
         self.lightChanger = self.lightChangerResolver.getLightChanger()
         self.yeeLightBulbFinder = yeeLightBulbFinder
+        self.defaultYeelightIPs = ['Press Discover to find bulbs!']
 
     def renderLayout(self):
         config = self.configManager.read()
@@ -23,7 +24,7 @@ class SettingsWindow:
         yeelight_ip = config['YEELIGHT']['yeelight_ip']
         
         modeConfigLayout = []
-
+        
         if str(mode) == str(Mode.Mode.HomeAssistant.name):
             modeConfigLayout = [
                 [
@@ -44,7 +45,7 @@ class SettingsWindow:
                 [
                     sg.Text('Bulbs in your LAN', tooltip = 'Automatically discovered yeelight bulbs in your LAN.'), 
                     sg.Button('Discover', tooltip = 'Automatically discovers yeelight bulbs in your LAN.'),
-                    sg.Combo(values = [], auto_size_text = True, enable_events = True, key = 'DISCOVERED-BULBS-LIST')
+                    sg.Combo(values = self.defaultYeelightIPs, disabled = self.defaultYeelightIPs[0] == 'Press Discover to find bulbs!', default_value = self.defaultYeelightIPs[0], expand_x = True, auto_size_text = True, enable_events = True, key = 'DISCOVERED-BULBS-LIST')
                 ]
             ]
 
@@ -74,7 +75,8 @@ class SettingsWindow:
                 window.Element('YEELIGHT-IP').update(value = ip)
             if event == 'Discover':
                 bulbs = self.yeeLightBulbFinder.findBulbs()
-                window.Element('DISCOVERED-BULBS-LIST').update(values = bulbs)
+                self.defaultYeelightIPs = bulbs
+                window.Element('DISCOVERED-BULBS-LIST').update(values = bulbs, value = bulbs[0], disabled = False)
             if event == 'Default':
                 self.configManager.default()
                 window.close()
