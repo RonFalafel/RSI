@@ -6,6 +6,10 @@ RSI = Room Screen Immersion
 Syncs a smart bulb to the average screen color to get a beter immersion experience.  
 Great for **movies** and **gaming**.
 
+## Showcase Video
+
+[![Watch the video](https://img.youtube.com/vi/LmSRSs_x13M/maxresdefault.jpg)](https://youtu.be/LmSRSs_x13M)
+
 ## Supported Modes
 
 1. Yeelight Mode - Connects directly to a Yeelight smart bulb.
