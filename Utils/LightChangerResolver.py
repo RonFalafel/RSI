@@ -1,6 +1,7 @@
 import Utils.ConfigurationManager as ConfigurationManager, Utils.ILightChanger as ILightChanger, Utils.Mode as Mode
 from Utils.HALightChanger import HALightChanger
 from Utils.YeeLightChanger import YeeLightChanger
+from Utils.WLEDLightChanger import WLEDLightChanger
 
 class LightChangerResolver():
     def __init__(self, configManager: ConfigurationManager):
@@ -16,3 +17,6 @@ class LightChangerResolver():
         elif str(mode) == str(Mode.Mode.Yeelight.name):
             yeelight_ip = config['YEELIGHT']['yeelight_ip']
             return YeeLightChanger(yeelight_ip)
+        elif str(mode) == str(Mode.Mode.WLED.name):
+            wled_ip = config['WLED']['wled_ip']
+            return WLEDLightChanger(wled_ip)

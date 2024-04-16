@@ -2,14 +2,19 @@ from yeelight import *
 import time
 
 import Utils.ILightChanger as ILightChanger
+import Utils.RGBToHSVConverter as RGBToHSVConverter
 
 class YeeLightChanger(ILightChanger.ILightChanger):
     def __init__(self, yeelightIP):
+        self.rgbToHSVConverter = RGBToHSVConverter()
         
         # Connection taken from https://hyperion-project.org/forum/index.php?thread/529-xiaomi-rgb-bulb-simple-udp-server-solution/
         self.yeelightIP = yeelightIP
         self.bulb = Bulb(self.yeelightIP)
-        self.bulb.turn_on()
+        try:
+            self.bulb.turn_on()
+        except Exception as e:
+            print(e)
         self.bulb.effect = "smooth" # can be "sudden" or "smooth"
         self.bulb.duration = 150 # miliseconds of duration of effect, ignored in "sudden" effect. MINIMUM 30!
         
@@ -29,9 +34,10 @@ class YeeLightChanger(ILightChanger.ILightChanger):
                 break
         time.sleep(1)
     
-    def changeColor(self, h, s, v):
+    def changeColor(self, r, g, b):
+        hsv = self.rgbToHSVConverter.rgb2hsv(r, g, b)
         try:
-            self.bulb.set_hsv(h, s, v) #, LightType.Main) # Don't know what this does... maybe look into it later lol
+            self.bulb.set_hsv(*hsv) #, LightType.Main) # Don't know what this does... maybe look into it later lol
         except Exception as e:
             print(e)
             

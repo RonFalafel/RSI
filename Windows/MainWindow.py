@@ -79,10 +79,10 @@ class MainWindow:
             if running:
                 avg = self.screenReader.getAvgScreenColor(sc)
                 rgb = avg[0],avg[1],avg[2]
-                hsv = self.rgbToHSVConverter.rgb2hsv(*rgb)
+                # hsv = self.rgbToHSVConverter.rgb2hsv(*rgb)
                 if vary_br:
-                    self.lightChanger.changeColor(*hsv)
+                    self.lightChanger.changeColor(*rgb)
                 else:
-                    self.lightChanger.changeColor(hsv[0], hsv[1], max_br)
+                    self.lightChanger.changeColor(rgb[0], rgb[1], rgb[2], max_br)
 
         window.close()
