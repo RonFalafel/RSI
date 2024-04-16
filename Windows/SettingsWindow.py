@@ -113,7 +113,7 @@ class SettingsWindow:
 
                 try:
                     print('Testing Configuration')
-                    self.lightChanger.changeColor(140, 99, 100)
+                    self.lightChanger.changeColor(0, 255, 0)
                     time.sleep(1)
                     self.lightChanger.defaultColor()
                     break
@@ -122,5 +122,7 @@ class SettingsWindow:
                         sg.popup('Reaching Home Assistant failed!', 'Validate your IP and Port and make sure your webhooks are configured correctly!')
                     elif str(mode) == str(Mode.Mode.Yeelight.name):
                         sg.popup('Reaching Yeelight Bulb failed!', 'Validate your IP and make sure your bulb is on & connected!')
+                    elif str(mode) == str(Mode.Mode.WLED.name):
+                        sg.popup('Reaching WLED failed!', 'Validate your IP and make sure your WLED instance is on!')
 
         window.close()

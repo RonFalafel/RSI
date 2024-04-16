@@ -11,6 +11,7 @@ class WLEDLightChanger(ILightChanger.ILightChanger):
     
     def changeColor(self, r, g, b):
         color = (r, g, b)
+        print(f"Changing color to {color}")
 
         # Max amount of LEDs
         num_leds = 256
