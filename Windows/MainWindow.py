@@ -18,7 +18,7 @@ class MainWindow:
         self.screens_list = self.screenReader.getScreensList()
 
     def renderLayout(self):
-        sg.theme('Reddit')
+        sg.theme('HotDogStand')
 
         layout = [  
             [

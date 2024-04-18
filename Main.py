@@ -20,3 +20,7 @@ settingsWindow = SettingsWindow(configurationManager, lightChangerResolver, yeeL
 mainWindow = MainWindow(configurationManager, screenReader, rgbToHSVConverter, lightChangerResolver, settingsWindow)
 
 mainWindow.showMainWindow()
+
+# IN ORDER TO BUILD EXECUTABLE:
+# 1. RUN: pip install pyinstaller
+# 2: RUN: python3 -m PyInstaller --onefile Main.py
