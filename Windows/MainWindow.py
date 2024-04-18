@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 
+import Utils.ConfigurationManager as ConfigurationManager
 from Utils.LightChangerResolver import LightChangerResolver
 from Utils.ILightChanger import ILightChanger
 from Utils.ScreenReader import ScreenReader
@@ -7,16 +8,17 @@ from Utils.RGBToHSVConverter import RGBToHSVConverter
 from Windows.SettingsWindow import SettingsWindow
 
 class MainWindow:
-    def __init__(self, screenReader: ScreenReader, rgbToHSVConverter: RGBToHSVConverter, lightChangerResolver: LightChangerResolver, settingsWindow : SettingsWindow):
+    def __init__(self, configManager : ConfigurationManager, screenReader: ScreenReader, rgbToHSVConverter: RGBToHSVConverter, lightChangerResolver: LightChangerResolver, settingsWindow : SettingsWindow):
+        self.configManager = configManager
         self.settingsWindow = settingsWindow
         self.screenReader = screenReader
         self.rgbToHSVConverter = rgbToHSVConverter
         self.lightChangerResolver = lightChangerResolver
         self.lightChanger = self.lightChangerResolver.getLightChanger()
+        self.screens_list = self.screenReader.getScreensList()
 
-    def showMainWindow(self):
+    def renderLayout(self):
         sg.theme('Reddit')
-        screens_list = self.screenReader.getScreensList()
 
         layout = [  
             [
@@ -26,7 +28,7 @@ class MainWindow:
             ],
             [
                 sg.Text('Screen:', tooltip = 'The screen to be synced to the light.'), 
-                sg.Combo(values = screens_list, default_value = [screens_list[0]], disabled = len(screens_list) == 2, auto_size_text = True, key = 'SCREENS-LIST'), 
+                sg.Combo(values = self.screens_list, default_value = [self.screens_list[0]], disabled = len(self.screens_list) == 2, auto_size_text = True, key = 'SCREENS-LIST'), 
                 sg.Button('Refresh Screens', tooltip = 'Use this to refresh the screen list when connecting / disconnecting screens.')
             ],
             [
@@ -37,16 +39,23 @@ class MainWindow:
         ]
 
         # Create the Window
-        window = sg.Window('Screen Light Thingy', layout)
+        return sg.Window('Screen Light Thingy', layout)
+    
+    def showMainWindow(self):
+        window = self.renderLayout()
+        config = self.configManager.read()
 
-        running = False
+        refreshRate = int(config['ADVANCED']['refresh_rate'])
+        colorPrecision = int(config['ADVANCED']['color_precision'])
+
+        running = False # Wether the light sync is running or not
 
         while True:
-            event, values = window.read(150) # Seems buggy on HA mode - worked well on 1000ms
-            # print(event, values) # Shows GUI state
+            event, values = window.read(refreshRate) # I reccomend using 150ms for YeeLight Mode and 1000ms on HA mode (higher latency)
+            # print(event, values) # Shows GUI state (for debugging)
             max_br = values["MAX-BRIGHTNESS"]
             vary_br = values["VARY-BRIGHTNESS"]
-            sc = screens_list.index(values['SCREENS-LIST'])
+            sc = self.screens_list.index(values['SCREENS-LIST'])
 
             if event == 'Start': # if user clicks start
                 running = True
@@ -60,21 +69,20 @@ class MainWindow:
                 running = False
 
             if event == 'Refresh Screens': # if user clicks stop
-                screens_list = self.screenReader.getScreensList()
-                window.Element('SCREENS-LIST').update(values = screens_list, set_to_index = [0])
-                window.Element('SCREENS-LIST').update(disabled = len(screens_list) == 2)
+                self.screens_list = self.screenReader.getScreensList()
+                window.Element('SCREENS-LIST').update(values = self.screens_list, set_to_index = [0])
+                window.Element('SCREENS-LIST').update(disabled = len(self.screens_list) == 2)
 
             if event == 'Settings': # if user clicks stop
                 self.settingsWindow.showSettingsWindow()
                 self.lightChanger = self.lightChangerResolver.getLightChanger()
 
             if running:
-                avg = self.screenReader.getAvgScreenColor(sc)
+                avg = self.screenReader.getAvgScreenColor(sc, colorPrecision)
                 rgb = avg[0],avg[1],avg[2]
-                hsv = self.rgbToHSVConverter.rgb2hsv(*rgb)
                 if vary_br:
-                    self.lightChanger.changeColor(*hsv)
+                    self.lightChanger.changeColor(*rgb)
                 else:
-                    self.lightChanger.changeColor(hsv[0], hsv[1], max_br)
+                    self.lightChanger.changeColor(rgb[0], rgb[1], rgb[2], max_br)
 
         window.close()

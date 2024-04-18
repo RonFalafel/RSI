@@ -22,6 +22,7 @@ class SettingsWindow:
         home_assistant_ip = config['HOME ASSISTANT']['home_assistant_ip']
         home_assistant_port = config['HOME ASSISTANT']['home_assistant_port']
         yeelight_ip = config['YEELIGHT']['yeelight_ip']
+        wled_ip = config['WLED']['wled_ip']
         
         modeConfigLayout = []
         
@@ -46,6 +47,13 @@ class SettingsWindow:
                     sg.Text('Bulbs in your LAN', tooltip = 'Automatically discovered yeelight bulbs in your LAN.'), 
                     sg.Button('Discover', tooltip = 'Automatically discovers yeelight bulbs in your LAN.'),
                     sg.Combo(values = self.defaultYeelightIPs, disabled = self.defaultYeelightIPs[0] == 'Press Discover to find bulbs!', default_value = self.defaultYeelightIPs[0], expand_x = True, auto_size_text = True, enable_events = True, key = 'DISCOVERED-BULBS-LIST')
+                ]
+            ]
+        elif str(mode) == str(Mode.Mode.WLED.name):
+            modeConfigLayout = [
+                [
+                    sg.Text('WLED IP', tooltip = 'The local address of your WLED instance.'), 
+                    sg.InputText(default_text = wled_ip, key = 'WLED-IP')
                 ]
             ]
 
@@ -97,12 +105,15 @@ class SettingsWindow:
                 elif str(mode) == str(Mode.Mode.Yeelight.name):
                     yeelight_ip = values['YEELIGHT-IP']
                     self.configManager.writeYeelightConfig(yeelight_ip)
+                elif str(mode) == str(Mode.Mode.WLED.name):
+                    wled_ip = values['WLED-IP']
+                    self.configManager.writeYeelightConfig(wled_ip)
                 
                 self.lightChanger = self.lightChangerResolver.getLightChanger()
 
                 try:
                     print('Testing Configuration')
-                    self.lightChanger.changeColor(140, 99, 100)
+                    self.lightChanger.changeColor(0, 255, 0)
                     time.sleep(1)
                     self.lightChanger.defaultColor()
                     break
@@ -111,5 +122,7 @@ class SettingsWindow:
                         sg.popup('Reaching Home Assistant failed!', 'Validate your IP and Port and make sure your webhooks are configured correctly!')
                     elif str(mode) == str(Mode.Mode.Yeelight.name):
                         sg.popup('Reaching Yeelight Bulb failed!', 'Validate your IP and make sure your bulb is on & connected!')
+                    elif str(mode) == str(Mode.Mode.WLED.name):
+                        sg.popup('Reaching WLED failed!', 'Validate your IP and make sure your WLED instance is on!')
 
         window.close()

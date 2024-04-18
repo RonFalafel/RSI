@@ -21,10 +21,16 @@ class ConfigurationManager:
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
 
+    def writeRefreshRateConfig(self, refresh_rate):
+        self.config['ADVANCED'] = {'refresh_rate': refresh_rate}
+        with open('config.ini', 'w') as configfile:
+            self.config.write(configfile)
+
     def default(self):
         self.writeMode(Mode.Mode.HomeAssistant.name)
         self.writeHAConfig('192.168.1.123', '8123') # Default home assistant values
         self.writeYeelightConfig('192.168.1.200') # Random made up IP
+        self.writeRefreshRateConfig('150')
     
     def read(self):
         try:

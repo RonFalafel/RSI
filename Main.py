@@ -17,6 +17,6 @@ yeeLightBulbFinder = YeeLightBulbFinder()
 
 # Windows Initialization
 settingsWindow = SettingsWindow(configurationManager, lightChangerResolver, yeeLightBulbFinder)
-mainWindow = MainWindow(screenReader, rgbToHSVConverter, lightChangerResolver, settingsWindow)
+mainWindow = MainWindow(configurationManager, screenReader, rgbToHSVConverter, lightChangerResolver, settingsWindow)
 
 mainWindow.showMainWindow()
