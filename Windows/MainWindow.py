@@ -45,8 +45,9 @@ class MainWindow:
         window = self.renderLayout()
         config = self.configManager.read()
 
-        refreshRate = config['ADVANCED']['refresh_rate']
-        
+        refreshRate = int(config['ADVANCED']['refresh_rate'])
+        colorPrecision = int(config['ADVANCED']['color_precision'])
+
         running = False # Wether the light sync is running or not
 
         while True:
@@ -77,9 +78,8 @@ class MainWindow:
                 self.lightChanger = self.lightChangerResolver.getLightChanger()
 
             if running:
-                avg = self.screenReader.getAvgScreenColor(sc)
+                avg = self.screenReader.getAvgScreenColor(sc, colorPrecision)
                 rgb = avg[0],avg[1],avg[2]
-                # hsv = self.rgbToHSVConverter.rgb2hsv(*rgb)
                 if vary_br:
                     self.lightChanger.changeColor(*rgb)
                 else:
