@@ -9,9 +9,9 @@ class WLEDLightChanger(ILightChanger.ILightChanger):
         self.UDP_IP_ADDRESS = wledIP
         self.UDP_PORT_NO = 21324
     
-    def changeColor(self, r, g, b):
+    def changeColor(self, r, g, b, br = 100):
         color = (r, g, b)
-        print(f"Changing color to {color}")
+        print(f"Changing color to {color} at brightness {br}")
 
         # Max amount of LEDs
         num_leds = 256

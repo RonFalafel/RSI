@@ -9,7 +9,7 @@ class HALightChanger(ILightChanger.ILightChanger):
         self.home_assistant_port = home_assistant_port
         self.rgbToHSVConverter = RGBToHSVConverter()
 
-    def changeColor(self, r, g, b):
+    def changeColor(self, r, g, b, br = 100):
         hsv = self.rgbToHSVConverter.rgb2hsv(r, g, b)
         requests.post(f"http://{self.home_assistant_ip}:{self.home_assistant_port}/api/webhook/hsv-webhook?H={hsv[0]}&S={hsv[1]}&V={hsv[2]}")
 

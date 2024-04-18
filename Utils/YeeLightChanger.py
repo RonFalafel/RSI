@@ -34,7 +34,7 @@ class YeeLightChanger(ILightChanger.ILightChanger):
                 break
         time.sleep(1)
     
-    def changeColor(self, r, g, b):
+    def changeColor(self, r, g, b, br = 100):
         hsv = self.rgbToHSVConverter.rgb2hsv(r, g, b)
         try:
             self.bulb.set_hsv(*hsv) #, LightType.Main) # Don't know what this does... maybe look into it later lol
