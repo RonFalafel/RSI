@@ -21,8 +21,18 @@ class ConfigurationManager:
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
 
+    def writeELDConfig(self, wled_ip):
+        self.config['WLED'] = {'wled_ip': wled_ip}
+        with open('config.ini', 'w') as configfile:
+            self.config.write(configfile)
+
     def writeRefreshRateConfig(self, refresh_rate):
         self.config['ADVANCED'] = {'refresh_rate': refresh_rate}
+        with open('config.ini', 'w') as configfile:
+            self.config.write(configfile)
+    
+    def writeColorPrecisionConfig(self, color_precision):
+        self.config['ADVANCED'] = {'color_precision': color_precision}
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
 
@@ -30,7 +40,9 @@ class ConfigurationManager:
         self.writeMode(Mode.Mode.HomeAssistant.name)
         self.writeHAConfig('192.168.1.123', '8123') # Default home assistant values
         self.writeYeelightConfig('192.168.1.200') # Random made up IP
-        self.writeRefreshRateConfig('150')
+        self.writeYeelightConfig('192.168.1.229') # Random made up IP
+        self.writeRefreshRateConfig('0')
+        self.writeColorPrecisionConfig('0')
     
     def read(self):
         try:

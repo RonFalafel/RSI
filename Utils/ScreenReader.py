@@ -36,5 +36,6 @@ class ScreenReader:
             rgb_img = np.flip(frame[:, :, :3], 2)
 
             # Calculating the average color numbers
-            avg = np.average(rgb_img[::PRIME_NUMBBERS[colorPrecision]], (0,1))
+            sample_rate = PRIME_NUMBBERS[colorPrecision] # Sample every sample_rate'th pixel.
+            avg = np.average(rgb_img[::sample_rate], (0,1))
             return avg

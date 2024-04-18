@@ -45,8 +45,16 @@ class MainWindow:
         window = self.renderLayout()
         config = self.configManager.read()
 
-        refreshRate = int(config['ADVANCED']['refresh_rate'])
-        colorPrecision = int(config['ADVANCED']['color_precision'])
+        try:
+            refreshRate = int(config['ADVANCED']['refresh_rate'])
+        except:
+            refreshRate = 0
+            self.configManager.writeRefreshRateConfig(refreshRate)
+        try:
+            colorPrecision = int(config['ADVANCED']['color_precision'])
+        except:
+            colorPrecision = 0
+            self.configManager.writeColorPrecisionConfig(colorPrecision)
 
         running = False # Wether the light sync is running or not
 

@@ -12,8 +12,9 @@ Great for **movies** and **gaming**.
 
 ## Supported Modes
 
-1. Yeelight Mode - Connects directly to a Yeelight smart bulb.
+1. Yeelight Mode - Connects directly to a Yeelight smart bulb (UDP).
 2. Home Assistant Mode - Sends a webhook call to your Home Assistant that updates your light to your average screen color.
+2. WLED Mode - Connects directly to your local WLED instance (UDP). Will sync all LEDs on the WLED instance to the average screen color.
 
 ## Upcoming features
 
@@ -21,6 +22,14 @@ Great for **movies** and **gaming**.
 2. Yeelight bulb discovery that shows all bulbs in your LAN in the GUI.
 3. Prettier GUI.
 4. Bug fixes XD
+
+### Advanced Configuration
+
+In the config.ini file you can find some advanced configurations that have not been added to the UI yet.
+The 2 advanced options that can elevate the sync experience are:
+
+1. Refresh Rate - (0 to 1000) This is the time in milliseconds that will be waited between screenshots. I reccomend 0 for UDP modes such as Yeelight and WLED and around 150 for Webhook modes  such as Home Assistant.
+2. Color Precision - (0 to 100) This is the sampling rate of the pixel colors from your screen. 0 = Sample all pixels. 100 = Sample every 541 pixles.
 
 ### Home Assistant Webhooks
 
