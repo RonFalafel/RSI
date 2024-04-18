@@ -36,7 +36,7 @@ class ConfigurationManager:
         self.writeHAConfig('192.168.1.123', '8123') # Default home assistant values
         self.writeYeelightConfig('192.168.1.200') # Random made up IP
         self.writeWLEDConfig('192.168.1.229') # Random made up IP
-        self.writeAdvancedConfig('0', '0')
+        self.writeAdvancedConfig('0', '50')
     
     def read(self):
         try:
