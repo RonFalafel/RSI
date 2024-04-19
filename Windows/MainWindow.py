@@ -17,14 +17,20 @@ class MainWindow:
         self.lightChanger = self.lightChangerResolver.getLightChanger()
         self.screens_list = self.screenReader.getScreensList()
 
-    def renderLayout(self):
-        sg.theme('HotDogStand')
+    def renderLayout(self, theme, refreshRate, colorPrecision):
+        sg.theme(theme)
 
         layout = [  
             [
                 sg.Text('Max Brightness:', tooltip = 'The max brightness of the screen. When \"Vary Brightess\" is off, this change be the lamp brightness.'), 
-                sg.Slider(range = (1, 100), default_value = 100, orientation = 'horizontal', key = "MAX-BRIGHTNESS"),
+                sg.Slider(range = (1, 100), default_value = 100, orientation = 'horizontal', key = "MAX-BRIGHTNESS", tooltip = 'The max brightness of the screen. When \"Vary Brightess\" is off, this change be the lamp brightness.'),
                 sg.Checkbox('Vary Brightess', default = True, key = "VARY-BRIGHTNESS", tooltip = 'Toggles whether the brightness will vary depending on screen brightness.')
+            ],
+            [
+                sg.Text('Refresh Rate:', tooltip = 'Milliseconds between each screen capture'), 
+                sg.Slider(range = (0, 150), default_value = refreshRate, orientation = 'horizontal', enable_events=True, key = "REFRESH-RATE", tooltip = 'Milliseconds between each screen capture'),
+                sg.Text('Color Precision:', tooltip = 'The precision of the color capture. Lower values are faster (less CPU) but less accurate.'), 
+                sg.Slider(range = (0, 100), default_value = colorPrecision, orientation = 'horizontal', enable_events=True, key = "COLOR-PRECISION", tooltip = 'The precision of the color capture. Lower values are faster (less CPU) but less accurate.'),
             ],
             [
                 sg.Text('Screen:', tooltip = 'The screen to be synced to the light.'), 
@@ -42,20 +48,22 @@ class MainWindow:
         return sg.Window('Screen Light Thingy', layout)
     
     def showMainWindow(self):
-        window = self.renderLayout()
         config = self.configManager.read()
 
         try:
             refreshRate = int(config['ADVANCED']['refresh_rate'])
         except:
             refreshRate = 0
-            self.configManager.writeRefreshRateConfig(refreshRate)
+            self.configManager.writeAdvancedConfig(int(refreshRate), int(colorPrecision))
+
         try:
             colorPrecision = int(config['ADVANCED']['color_precision'])
         except:
             colorPrecision = 0
-            self.configManager.writeColorPrecisionConfig(colorPrecision)
+            self.configManager.writeAdvancedConfig(int(refreshRate), int(colorPrecision))
 
+
+        window = self.renderLayout('reddit', refreshRate, colorPrecision)
         running = False # Wether the light sync is running or not
 
         while True:
@@ -76,14 +84,22 @@ class MainWindow:
                 self.lightChanger.defaultColor()
                 running = False
 
-            if event == 'Refresh Screens': # if user clicks stop
+            if event == 'Refresh Screens': # if user clicks Refresh Screens
                 self.screens_list = self.screenReader.getScreensList()
                 window.Element('SCREENS-LIST').update(values = self.screens_list, set_to_index = [0])
                 window.Element('SCREENS-LIST').update(disabled = len(self.screens_list) == 2)
 
-            if event == 'Settings': # if user clicks stop
+            if event == 'Settings': # if user clicks Settings
                 self.settingsWindow.showSettingsWindow()
                 self.lightChanger = self.lightChangerResolver.getLightChanger()
+
+            if event == 'REFRESH-RATE': # if user changes refresh rate
+                refreshRate = int(values['REFRESH-RATE'])
+                self.configManager.writeAdvancedConfig(refreshRate, colorPrecision)
+
+            if event == 'COLOR-PRECISION': # if user changes color precision
+                colorPrecision = int(values['COLOR-PRECISION'])
+                self.configManager.writeAdvancedConfig(refreshRate, colorPrecision)
 
             if running:
                 avg = self.screenReader.getAvgScreenColor(sc, colorPrecision)

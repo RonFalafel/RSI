@@ -23,4 +23,4 @@ mainWindow.showMainWindow()
 
 # IN ORDER TO BUILD EXECUTABLE:
 # 1. RUN: pip install pyinstaller
-# 2: RUN: python3 -m PyInstaller --onefile Main.py
+# 2: RUN: python3 -m PyInstaller --noconsole --onefile Main.py
