@@ -31,12 +31,18 @@ class ConfigurationManager:
         with open('config.ini', 'w+') as configfile:
             self.config.write(configfile)
 
+    def writeUIConfig(self, theme):
+        self.config['UI'] = {'theme': theme}
+        with open('config.ini', 'w+') as configfile:
+            self.config.write(configfile)
+
     def default(self):
         self.writeMode('WLED')
         self.writeHAConfig('192.168.1.123', '8123') # Default home assistant values
         self.writeYeelightConfig('192.168.1.200') # Random made up IP
         self.writeWLEDConfig('192.168.1.229') # Random made up IP
         self.writeAdvancedConfig('0', '50')
+        self.writeUIConfig('reddit')
     
     def read(self):
         try:

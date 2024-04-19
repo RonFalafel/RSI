@@ -35,7 +35,9 @@ class MainWindow:
             [
                 sg.Text('Screen:', tooltip = 'The screen to be synced to the light.'), 
                 sg.Combo(values = self.screens_list, default_value = [self.screens_list[0]], disabled = len(self.screens_list) == 2, auto_size_text = True, key = 'SCREENS-LIST'), 
-                sg.Button('Refresh Screens', tooltip = 'Use this to refresh the screen list when connecting / disconnecting screens.')
+                sg.Button('Refresh Screens', tooltip = 'Use this to refresh the screen list when connecting / disconnecting screens.'),
+                sg.Text('UI Theme:', tooltip = 'The theme for the UI (I personally reccommend HotDogStand).'), 
+                sg.Combo(values = sg.theme_list(), default_value = theme, auto_size_text = True, enable_events=True, key = 'THEME', tooltip = 'The theme for the UI (I personally reccommend HotDogStand).')
             ],
             [
                 sg.Button('Start', tooltip = 'Starts the light sync.'), 
@@ -52,18 +54,20 @@ class MainWindow:
 
         try:
             refreshRate = int(config['ADVANCED']['refresh_rate'])
+            colorPrecision = int(config['ADVANCED']['color_precision'])
         except:
             refreshRate = 0
+            colorPrecision = 20
             self.configManager.writeAdvancedConfig(int(refreshRate), int(colorPrecision))
 
         try:
-            colorPrecision = int(config['ADVANCED']['color_precision'])
+            theme = config['UI']['theme']
         except:
-            colorPrecision = 0
-            self.configManager.writeAdvancedConfig(int(refreshRate), int(colorPrecision))
+            theme = 'reddit'
+            self.configManager.writeUIConfig(theme)
 
 
-        window = self.renderLayout('reddit', refreshRate, colorPrecision)
+        window = self.renderLayout(theme, refreshRate, colorPrecision)
         running = False # Wether the light sync is running or not
 
         while True:
@@ -100,6 +104,12 @@ class MainWindow:
             if event == 'COLOR-PRECISION': # if user changes color precision
                 colorPrecision = int(values['COLOR-PRECISION'])
                 self.configManager.writeAdvancedConfig(refreshRate, colorPrecision)
+
+            if event == 'THEME': # if user changes theme
+                theme = values['THEME']
+                self.configManager.writeUIConfig(theme)
+                window.close()
+                window = self.renderLayout(theme, refreshRate, colorPrecision)
 
             if running:
                 avg = self.screenReader.getAvgScreenColor(sc, colorPrecision)
