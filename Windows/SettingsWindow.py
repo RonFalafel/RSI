@@ -105,7 +105,7 @@ class SettingsWindow:
                     self.configManager.writeYeelightConfig(yeelight_ip)
                 elif str(mode) == str(Mode.Mode.WLED.name):
                     wled_ip = values['WLED-IP']
-                    self.configManager.writeYeelightConfig(wled_ip)
+                    self.configManager.writeWLEDConfig(wled_ip)
                 
                 self.lightChanger = self.lightChangerResolver.getLightChanger()
 
