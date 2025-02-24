@@ -1,6 +1,6 @@
 import configparser
 
-import Utils.Mode as Mode
+from Utils.Mode import Mode
 
 class ConfigurationManager:
     def __init__(self):

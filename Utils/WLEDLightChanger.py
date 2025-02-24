@@ -1,7 +1,7 @@
-import Utils.ILightChanger as ILightChanger
+from Utils.ILightChanger import ILightChanger
 import socket
 
-class WLEDLightChanger(ILightChanger.ILightChanger):
+class WLEDLightChanger(ILightChanger):
     def __init__(self, wledIP):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.protocol = 1

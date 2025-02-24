@@ -2,7 +2,6 @@ import PySimpleGUI as sg
 
 import Utils.ConfigurationManager as ConfigurationManager
 from Utils.LightChangerResolver import LightChangerResolver
-from Utils.ILightChanger import ILightChanger
 from Utils.ScreenReader import ScreenReader
 from Utils.RGBToHSVConverter import RGBToHSVConverter
 from Windows.SettingsWindow import SettingsWindow
@@ -68,21 +67,22 @@ class MainWindow:
 
 
         window = self.renderLayout(theme, refreshRate, colorPrecision)
-        running = False # Wether the light sync is running or not
+        running = False # Whether the light sync is running or not
 
         while True:
             event, values = window.read(refreshRate) # I reccomend using 150ms for YeeLight Mode and 1000ms on HA mode (higher latency)
             # print(event, values) # Shows GUI state (for debugging)
+            
+            if event == sg.WIN_CLOSED or values is None: # if user closes window
+                self.lightChanger.defaultColor()
+                break
+
             max_br = values["MAX-BRIGHTNESS"]
             vary_br = values["VARY-BRIGHTNESS"]
             sc = self.screens_list.index(values['SCREENS-LIST'])
 
             if event == 'Start': # if user clicks start
                 running = True
-
-            if event == sg.WIN_CLOSED: # if user closes window
-                self.lightChanger.defaultColor()
-                break
 
             if event == 'Stop': # if user clicks stop
                 self.lightChanger.defaultColor()

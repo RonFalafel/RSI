@@ -4,8 +4,6 @@ import time
 import Utils.ConfigurationManager as ConfigurationManager, Utils.ILightChanger as ILightChanger, Utils.Mode as Mode
 from Utils.YeeLightBulbFinder import YeeLightBulbFinder
 from Utils.LightChangerResolver import LightChangerResolver
-from Utils.HALightChanger import HALightChanger
-from Utils.YeeLightChanger import YeeLightChanger
 
 class SettingsWindow:
     def __init__(self, configManager : ConfigurationManager, lightChangerResolver: LightChangerResolver, yeeLightBulbFinder: YeeLightBulbFinder):

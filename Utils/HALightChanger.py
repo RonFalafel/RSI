@@ -1,9 +1,9 @@
 import requests
 
-import Utils.ILightChanger as ILightChanger
-import Utils.RGBToHSVConverter as RGBToHSVConverter
+from Utils.ILightChanger import ILightChanger
+from Utils.RGBToHSVConverter import RGBToHSVConverter
 
-class HALightChanger(ILightChanger.ILightChanger):
+class HALightChanger(ILightChanger):
     def __init__(self, home_assistant_ip, home_assistant_port):
         self.home_assistant_ip = home_assistant_ip
         self.home_assistant_port = home_assistant_port

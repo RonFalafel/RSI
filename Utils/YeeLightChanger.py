@@ -1,10 +1,10 @@
 from yeelight import *
 import time
 
-import Utils.ILightChanger as ILightChanger
-import Utils.RGBToHSVConverter as RGBToHSVConverter
+from Utils.ILightChanger import ILightChanger
+from Utils.RGBToHSVConverter import RGBToHSVConverter
 
-class YeeLightChanger(ILightChanger.ILightChanger):
+class YeeLightChanger(ILightChanger):
     def __init__(self, yeelightIP):
         self.rgbToHSVConverter = RGBToHSVConverter()
         
