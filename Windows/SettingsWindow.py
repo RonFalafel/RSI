@@ -82,7 +82,10 @@ class SettingsWindow:
             if event == 'Discover':
                 bulbs = self.yeeLightBulbFinder.findBulbs()
                 self.defaultYeelightIPs = bulbs
-                window.Element('DISCOVERED-BULBS-LIST').update(values = bulbs, value = bulbs[0], disabled = False)
+                if len(bulbs) == 0:
+                    sg.popup('No bulbs found!', 'Make sure your bulbs are on and connected to the same network.')
+                else:
+                    window.Element('DISCOVERED-BULBS-LIST').update(values = bulbs, value = bulbs[0], disabled = False)
             if event == 'Default':
                 self.configManager.default()
                 window.close()
